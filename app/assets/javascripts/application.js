@@ -19,7 +19,6 @@
 //= require helpers
 //= require dateParse
 //= require name_popup
-//= require unsupported
 //= require info_edit
 //= require menu_edit
 //= require collapse_link_flipper
