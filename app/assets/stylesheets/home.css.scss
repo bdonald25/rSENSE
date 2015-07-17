@@ -72,7 +72,6 @@
 }
 .dropdown-menu {
   width: 100%;
-  background-color: black;
 }
 .navbar-fixed-top .row {
   position: relative;
@@ -98,7 +97,6 @@
         margin-top: 10px;
         .lr {
           font-size: 24px;
-          color: white;
         }
         .navbar-brand {
           max-width: 25% !important;
@@ -118,17 +116,6 @@
   top: 0;
   margin-right: 1%;
   margin-top: 10px;
-}
-.navbar-fixed-top .dropdown-menu {
-  background-color: #113 !important;
-  i {
-    color: white;
-  }
-  li {
-    a {
-      color: white !important;
-    }
-  }
 }
 .mobile-homepage-text {
   background-color: #F2F2F2 !important;
