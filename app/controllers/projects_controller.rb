@@ -60,27 +60,12 @@ class ProjectsController < ApplicationController
     @params = params
     @project = Project.find(params[:id])
 
-    # Determine if the project is cloned
-    @cloned_project = nil
-    unless @project.cloned_from.nil?
-      @cloned_project = Project.find(@project.cloned_from)
-    end
-
-    @liked_by_cur_user = false
-    if Like.find_by_user_id_and_project_id(@cur_user, @project.id)
-      @liked_by_cur_user = true
-    end
-
-    # checks for fields
-    @has_fields = false
-    if @project.fields.count > 0
-      @has_fields = true
-    end
-
-    @data_sets = @project.data_sets.search(params[:search])
-    if @data_sets.nil?
-      @data_sets = []
-    end
+    @cloned_project = Project.select(:id, :user_id, :title).where(id: @project.cloned_from).first
+    @liked_by_cur_user = Like.find_by_user_id_and_project_id(@cur_user, @project.id)
+    @data_sets = @project.data_sets.select('id', 'title', 'user_id', 'key', 'created_at', 'contributor_name').search(params[:search])
+    @fields = @project.fields
+    @field_count = @fields.count
+    @data_set_count = @data_sets.length
 
     recur = params.key?(:recur) ? params[:recur] == 'true' : false
 
@@ -263,7 +248,6 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
 
     # Delete fields as necessary
-    puts params[:hidden_deleted_fields]
     if params[:hidden_deleted_fields] != ''
       params[:hidden_deleted_fields].split(',').each do |x|
         if Field.find(x).destroy == -1 and return
@@ -284,7 +268,6 @@ class ProjectsController < ApplicationController
 
       unless field.update_attributes(name: params["#{field.id}_name"],
                                      unit: params["#{field.id}_unit"],
-                                     index: params["#{field.id}_index"],
                                      restrictions: restrictions)
         respond_to do |format|
           flash[:error] = 'Field names must be unique.'
@@ -295,14 +278,14 @@ class ProjectsController < ApplicationController
 
     # Add fields based on type
     if params[:hidden_location_count] == '1'
-      if addField('Latitude', 'Latitude', 'deg', [], params['latitude_index']) == -1 and return
+      if addField('Latitude', 'Latitude', 'deg', []) == -1 and return
       end
-      if addField('Longitude', 'Longitude', 'deg', [], params['longitude_index']) == -1 and return
+      if addField('Longitude', 'Longitude', 'deg', []) == -1 and return
       end
     end
 
     if params[:hidden_timestamp_count] == '1'
-      if addField('Timestamp', 'Timestamp', '', [], params['timestamp_index']) == -1 and return
+      if addField('Timestamp', 'Timestamp', '', []) == -1 and return
       end
     end
 
@@ -323,19 +306,15 @@ class ProjectsController < ApplicationController
   end
 
   # Helper function to add field to database
-  def addField(fieldType, fieldName, unit, restrictions, index)
+  def addField(fieldType, fieldName, unit, restrictions)
     if fieldName.nil?
       return
     else
-      if index.nil?
-        index = @project.fields.size
-      end
       field  = Field.new(project_id: @project.id,
                          field_type: get_field_type(fieldType),
                          name: fieldName,
                          unit: unit,
-                         restrictions: restrictions,
-                         index: index)
+                         restrictions: restrictions)
     end
 
     unless field.save
@@ -375,9 +354,7 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
     @matches.each do |header|
       field = Field.new(project_id: @project.id,
-                        field_type: header[1].to_i,
-                        name: header[0],
-                        index: @project.fields.size)
+                        field_type: header[1].to_i, name: header[0])
 
       unless field.save
         respond_to do |format|
