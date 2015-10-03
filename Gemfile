@@ -40,6 +40,9 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jqgrid-jquery-rails', '~> 4.6.001'
 
+# Allows touchscreens to work properly with jquery ui
+gem 'touchpunch-rails'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt' # Can't use the new name yet.
 gem 'bcrypt-ruby'
