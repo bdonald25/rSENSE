@@ -3,3 +3,7 @@
 # To ban all spiders from the entire site uncomment the next two lines:
 # User-Agent: *
 # Disallow: /
+
+# prevent magestic12.co.uk from crawling our site
+User-agent: MJ12bot
+Disallow: /
