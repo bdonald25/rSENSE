@@ -37,6 +37,40 @@ class UpdateFieldsTest < IntegrationTest
     assert page.has_content?('Fields were successfully updated.')
   end
 
+  test 'reorder fields' do
+    login('kcarcia@cs.uml.edu', '12345')
+    click_on 'Projects'
+    find('#project_title').set('Fields Test')
+    click_on 'Create Project'
+
+    assert page.has_content?('Fields'), "Project page should have 'Fields'"
+
+    find('#manual_fields').click
+
+    click_on 'Add Number'
+    assert page.has_content?('Number'), 'Number field is there'
+    click_on 'Add Number'
+    page.assert_selector('tr', count: 3)
+    click_on 'Add Text'
+    assert page.has_content?('Text'), 'Text field is there'
+
+    # move Number_1 from last to first
+    puts page.all('tr')[3].text
+    source = page.all('tr')[3]
+	target = page.all('tr')[1]
+	source.drag_to(target)
+
+	find('#fields_form_submit').click
+
+	assert page.has_content?('Fields were successfully updated.')
+
+	# check that Number_1 is now second (first position is the header)
+	rows = page.all('tr')
+	assert rows[1].text.include?('Number_1'), "Reordering fields failed"
+	assert rows[2].text.include?('Text_1'), "Reordering fields failed"
+	assert rows[3].text.include?('Number_2'), "Reordering fields failed"
+  end
+
   test 'template fields with data set' do
     login('kcarcia@cs.uml.edu', '12345')
     click_on 'Projects'
