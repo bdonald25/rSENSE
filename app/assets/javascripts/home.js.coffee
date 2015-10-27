@@ -30,10 +30,10 @@ $ ->
   # Other stuff
   ###
   $('.mainContent').on 'click', 'div.clickableItem', (event) ->
-    window.location = $(event.currentTarget).children('a').attr 'href'
+    window.location = ($ event.currentTarget).children('a').attr 'href'
   $('li.dropdown.navbtn').click () ->
     $('li.dropdown.navbtn').find('a:first').css 'color', 'white'
     $('li.dropdown.navbtn').removeAttr 'disabled'
-  if $('.fa.fa-user').length > 0
-    $('.lr').hide()
-    $('.globe').css('margin-top', 0)
+  if window.env == 'test'
+    $('input[type=file]').show()
+    $('.hidden-form').show()

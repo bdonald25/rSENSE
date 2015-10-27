@@ -35,14 +35,12 @@ $ ->
     globals.configs.ctrlsOpen ?= true
 
     globals.curVis = null
-    globals.VIS_MARGIN_WIDTH = 20
-    globals.VIS_MARGIN_HEIGHT = 70
 
     ###
     CoffeeScript version of runtime.
     ###
     # Toggle control panel
-    resizeVis = (aniLength = 600) ->
+    resizeVis = (toggleControls = true, aniLength = 600, init = false) ->
       newHeight = $(window).height()
       embed = globals.options? and globals.options.isEmbed?
       presentation = globals.options and globals.options.presentation?
@@ -50,19 +48,41 @@ $ ->
       unless embed then newHeight -= $('.navbar').height()
       $('#vis-wrapper').height(newHeight)
 
+      # Only show if clipping mode is active and there are active filters
+      showFilters = globals.configs.clippingMode and
+        globals.configs.activeFilters.length > 0
+      if (showFilters)
+        clearFilters()
+        addFilter(f) for f in globals.configs.activeFilters
+        $('.vis-filter > .remove').click ->
+          globals.configs.activeFilters.splice($(@).parent().index(), 1)
+          $(window).resize()
+          globals.curVis.start()
+
+      $('#vis-filters').toggle(showFilters)
+
       visWrapperWidth =
         if embed then window.innerWidth or window.outerWidth
         else $('#vis-wrapper').innerWidth()
       visWrapperHeight = $('#vis-wrapper').outerHeight()
-      visHeaderHeight = $('#vis-title-bar').outerHeight() +
-        $('#vis-tab-list').outerHeight()
+      visHeaderHeight = $('#vis-header').outerHeight()
       controlOpac = $('#vis-ctrls').css 'opacity'
-      controlSize = 290
+      controlSize = 320
       controlOpac = 1.0
+
+      if (init and globals.options.startCollapsed?) or
+      $('#vis-ctrl-container').is(':hidden')
+        globals.configs.ctrlsOpen = false
+
+      unless globals.configs.ctrlsOpen
+        controlSize = 0
+        controlOpac = 0.0
+
+      $('#ctrls-menu-btn').toggleClass('down', globals.configs.ctrlsOpen)
 
       # Adjust heights
       $('#vis-container').height(visWrapperHeight)
-      $('.md-sidenav-left').height(visWrapperHeight)
+      $('#vis-ctrl-container').height(visWrapperHeight)
       newHeight = visWrapperHeight
       unless presentation then newHeight -= visHeaderHeight
       $('#vis-container > .tab-content').height(newHeight)
@@ -74,12 +94,15 @@ $ ->
         aniLength, 'linear')
 
       # New widths should take into account visibility of tools
-      nWidth = visWrapperWidth
+      nWidth =
+        if globals.configs.ctrlsOpen then visWrapperWidth - controlSize
+        else visWrapperWidth
+      $('#vis-container').animate({width: nWidth}, aniLength, 'linear')
       globals.curVis.resize(nWidth, newHeight, aniLength)
 
     # Resize vis on page resize
-    $(window).resize () ->
-      resizeVis(0)
+    $(window).resize ->
+      resizeVis(false, 0)
 
     ### Hide all vis canvases to start ###
     $(can).hide() for can in ['#map-canvas', '#timeline-canvas',
@@ -129,7 +152,7 @@ $ ->
       ctx.canvas = lower + '-canvas'
       ctx.icon = if enabled then window.icons[dark] else window.icons[light]
 
-      tab = HandlebarsTemplates['visualizations/vis-tab'](ctx)
+      tab = HandlebarsTemplates[hbVis('vis-tab')](ctx)
       $('#vis-tab-list').append(tab)
 
       unless enabled
@@ -150,7 +173,7 @@ $ ->
     $("#vis-tab-list a[href='##{ccanvas}']").tab('show')
 
     # Initialize View
-    resizeVis(0)
+    resizeVis(false, 0, true)
 
     ### Change vis click handler ###
     $('#vis-tab-list a').click (e) ->
@@ -175,13 +198,16 @@ $ ->
 
       oldVis.end() if oldVis?
       globals.curVis.start()
-      resizeVis(0)
+      resizeVis(false, 0, true)
 
+    $('#ctrls-menu-btn').click ->
+      globals.configs.ctrlsOpen = !globals.configs.ctrlsOpen
+      resizeVis()
 
     # Deal with full screen
     $('#fullscreen-vis').click (e) ->
       fullscreenEnabled = document.fullscreenEnabled or
-        document.mozFullScreenEnabled
+        document.mozFullScreenEnabled ordocument.webkitFullscreenEnabled
       fullscreenElement = document.fullscreenElement or
         document.mozFullScreenElement or document.webkitFullscreenElement
       icon = $('#fullscreen-vis').find('i')
@@ -189,7 +215,7 @@ $ ->
         globals.fullscreen = true
         icon.removeClass('icon-resize-full')
         icon.addClass('icon-resize-small')
-        fullscreenVis = $('#vis-wrapper')[0]
+        fullscreenVis = $('#vis-container')[0]
         browserFullscreenMethod = fullscreenVis.webkitRequestFullScreen or
           fullscreenVis.mozRequestFullScreen or
           fullscreenVis.requestFullScreen or

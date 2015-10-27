@@ -7,13 +7,17 @@
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>
     <%= favicon_link_tag 'favicon.png' %>
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.min.js"></script>
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.indigo-blue.min.css" /> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <%= javascript_tag do %>
       window.namespace = <%= raw @namespace.to_json %>
+      window.env = '<%= Rails.env %>'
     <% end %>
   </head>
 
-  <body data-page-name="<%= params[:controller] %>/<%= params[:action] %>" ng-app="iSENSE">
+  <body data-page-name="<%= params[:controller] %>/<%= params[:action] %>">
     <% if !@cur_user.nil? and @cur_user.email.blank? %>
       <div class="alert">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

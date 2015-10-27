@@ -14,6 +14,7 @@
 //= require constants
 //= require image_path
 //= require jquery
+//= require jquery-ui
 //= require jquery_ujs
 //= require isense
 //= require helpers
@@ -26,12 +27,11 @@
 //= require jquery.caret.js
 //= require jquery.form.js
 //= require jquery.qrcode.min.js
+//= require jquery-ui/sortable
+//= require jquery.ui.touch-punch
 //= require titlebar.js.coffee
 //= require bootstrap
-//= require angular
-//= require angular-animate
-//= require angular-aria
-//= require angular-material.min
+//= require bootstrap-switch
 //= require jstz/jstz-1.0.4.min.js
 //
 //  -- Handlebars --
@@ -42,7 +42,7 @@
 //= require highcharts/highcharts
 //= require highcharts/highcharts-more
 //= require highcharts/modules/exporting
-//= require jquery.jqGrid.src.js
+//= require jqgrid-jquery-rails
 //= require grid.locale-en.js
 //= require jquery.prettyPhoto
 //= require markerclustererplus
