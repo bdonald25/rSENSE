@@ -39,14 +39,14 @@
 </script>
 <div id="vis-wrapper">
   <div id="vis-ctrl-container" class="hidden-xs"
-       <% if @presentation || !controls %> style="display:none" <% end %>>
+    <% if @presentation || !controls %> style="display:none" <% end %>>
     <div id="vis-ctrls">
     </div>
   </div>
   <div id="vis-container" role="tabpanel">
     <div id="vis-header">
       <div id="vis-title-bar"
-           <% if @presentation || !titleBar %> style="display:none" <% end %>>
+        <% if @presentation || !titleBar %> style="display:none" <% end %>>
         <div id="vis-title-edit-btn" class="hidden-xs hidden-sm">
           <div class="inline-block subtitle">
             <% if obj && can_edit?(obj) %>
@@ -81,6 +81,7 @@
               </div>
             <% end %>
           </div>
+          <button class="btn btn-default" id="fullscreen-vis" title="Maximize"><i class="fa fa-arrows-alt"></i></button>
           <% if getLatest %>
             <%= link_to "#{project_path(@project)}/data_sets",
                 { id:"refresh-data", class: "btn btn-default" } do %>

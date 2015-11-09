@@ -214,7 +214,7 @@ $ ->
     # Deal with full screen
     $('#fullscreen-vis').click (e) ->
       fullscreenEnabled = document.fullscreenEnabled or
-        document.mozFullScreenEnabled ordocument.webkitFullscreenEnabled
+        document.mozFullScreenEnabled or document.webkitFullscreenEnabled
       fullscreenElement = document.fullscreenElement or
         document.mozFullScreenElement or document.webkitFullscreenElement
       icon = $('#fullscreen-vis').find('i')
