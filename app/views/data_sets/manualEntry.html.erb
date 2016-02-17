@@ -10,23 +10,30 @@
 </div>
 
 <div class="row" style="padding-bottom: 2em">
-  <div class="col-lg-6">
-    <strong><label for="data_set_name">Data Set Name:</label></strong>
-      <input id="data_set_name" name="data_set_name" class="form-control" 
-        type="text" placeholder="Boston, MA Snowfall Total">
-  </div>
+  <% time = Time.now.strftime('%-m/%-d/%Y %-I:%M%P') %>
   <% if @cur_user.nil? %>
+    <div class="col-lg-6">
+      <strong><label for="data_set_name">Data Set Name:</label></strong>
+        <input id="data_set_name" name="data_set_name" class="form-control" 
+          type="text" placeholder="Boston, MA Snowfall Total" value="<%=session[:contributor_name]%> <%=time%>">
+    </div>
     <div class="col-lg-6" <% unless @cur_user.nil? %>style="display: none"<% end %>>
       <input type="hidden" id="contrib_name" name="contrib_name" value="<%=session[:contributor_name]%>">
+    </div>
+  <% else %>
+   <div class="col-lg-6">
+      <strong><label for="data_set_name">Data Set Name:</label></strong>
+      <input id="data_set_name" name="data_set_name" class="form-control"
+        type="text" placeholder="Boston, MA Snowfall Total" value="<%=@cur_user.name%> <%=time%>">
     </div>
   <% end %>
 </div>
 
 <div class="row">
   <div class="span12 edit_table_control pull-right">
-    <button class="btn btn-danger edit_table_cancel">Cancel</button>
-    <button id="edit_table_add_1" class="btn btn-success edit_table_add">Add Row</button>
-    <button id="edit_table_save_1" class="btn btn-primary edit_table_save">Save</button>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--red edit_table_cancel">Cancel</button>
+    <button id="edit_table_add_1" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--green edit_table_add">Add Row</button>
+    <button id="edit_table_save_1" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--blue edit_table_save">Save</button>
   </div>
 </div>
 
@@ -39,9 +46,9 @@
 
 <div id="row-slickgrid-2" class="row">
   <div class="span12 edit_table_control pull-right">
-    <button class="btn btn-danger edit_table_cancel">Cancel</button>
-    <button id="edit_table_add_2" class="btn btn-success edit_table_add">Add Row</button>
-    <button id="edit_table_save_2" class="btn btn-primary edit_table_save">Save</button>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--red edit_table_cancel">Cancel</button>
+    <button id="edit_table_add_2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--green edit_table_add">Add Row</button>
+    <button id="edit_table_save_2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--blue edit_table_save">Save</button>
   </div>
 </div>
 
